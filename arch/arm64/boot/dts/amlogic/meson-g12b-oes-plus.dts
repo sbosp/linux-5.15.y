@@ -65,16 +65,16 @@
 
 		net_green_led {
 			label = "net_green_led";
-			gpios = <&gpio 55 GPIO_ACTIVE_LOW>; /* GPIOX_23 */
-			linux,default-trigger = "eth0:link";
+			gpios = <&gpio 55 GPIO_ACTIVE_HIGH>; /* GPIOX_23 */
+			linux,default-trigger = "0.0:00:link";
 			default-state = "off";
 		};
 
 		net_red_led {
 			label = "net_red_led";
-			gpios = <&gpio 57 GPIO_ACTIVE_HIGH>; /* GPIOX_25 */
-			linux,default-trigger = "eth0:activity";
-			default-state = "off";
+			gpios = <&gpio 57 GPIO_ACTIVE_LOW>; /* GPIOX_25 */
+			linux,default-trigger = "0.0:00:link";
+			default-state = "on";
 		};
 
 		sata1_led: sata1 {
@@ -141,8 +141,8 @@
 };
 
 &external_phy {
-	interrupts = <26 IRQ_TYPE_EDGE_FALLING>;
 	/delete-property/ reset-gpios;
+	interrupts = <26 IRQ_TYPE_EDGE_FALLING>;
 };
 
 &emmc_pwrseq {
