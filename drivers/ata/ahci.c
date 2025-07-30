@@ -615,6 +615,8 @@ static const struct pci_device_id ahci_pci_tbl[] = {
 	{ PCI_VDEVICE(ASMEDIA, 0x0612), board_ahci_43bit_dma },	/* ASM1061/1062 */
 	{ PCI_VDEVICE(ASMEDIA, 0x0621), board_ahci },   /* ASM1061R */
 	{ PCI_VDEVICE(ASMEDIA, 0x0622), board_ahci },   /* ASM1062R */
+	/* Add support for OES-Plus ASM1064 with Subsystem ID 2116 */
+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_ASMEDIA, 0x1064, PCI_VENDOR_ID_ASMEDIA, 0x2116), board_ahci },
 
 	/*
 	 * Samsung SSDs found on some macbooks.  NCQ times out if MSI is
