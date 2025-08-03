@@ -367,7 +367,7 @@
 
 &pcie {
 	status = "okay";
-	reset-gpio = <&gpio 20 GPIO_ACTIVE_LOW>;
+	reset-gpios = <&gpio 20 GPIO_ACTIVE_LOW>;
 };
 
 &usb {
