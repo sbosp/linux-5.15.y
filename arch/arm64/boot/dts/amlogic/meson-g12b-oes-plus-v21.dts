@@ -366,25 +366,12 @@
 	phy-supply = <&usb_pwr>;
 };
 
-&pcie_phy {
-    status = "okay";
-    compatible = "amlogic,g12a-pcie-phy";
-    phy-supply = <&vsys_3v3>;
-    clocks = <&clkc CLKID_PCIE_PHY>;
-    clock-names = "refclk";
-    resets = <&reset RESET_PCIE_PHY>;
-    reset-names = "phy";
-    #phy-cells = <0>;
-};
-
 &pcie {
 	status = "okay";
 	reset-gpios = <&gpio GPIOC_1 GPIO_ACTIVE_LOW>; /* tested by voltmeter */
     reset-delay-us = <10000>;  // 10ms复位脉冲
     phy-reset-gpio = <&gpio GPIOH_5 GPIO_ACTIVE_LOW>;
     phy-reset-delay-us = <50000>;  // PHY复位后等待20ms
-    phys = <&pcie_phy>;
-    phy-names = "pciephy";
     num-lanes = <1>;
     max-link-speed = <1>;
     snps,enable-cdm-check;
