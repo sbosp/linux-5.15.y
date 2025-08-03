@@ -368,7 +368,6 @@
 &pcie {
 	status = "okay";
 	reset-gpios = <&gpio GPIOX_4 GPIO_ACTIVE_LOW>;
-	debug-gpio = <&gpio GPIO_TEST GPIO_ACTIVE_HIGH>;
 };
 
 &usb {
