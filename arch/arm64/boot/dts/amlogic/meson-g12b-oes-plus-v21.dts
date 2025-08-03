@@ -313,19 +313,6 @@
 };
 */
 
-&pcie {
-	status = "okay";
-	reset-gpios = <&gpio GPIOC_1 GPIO_ACTIVE_LOW>; /* tested by voltmeter */
-    reset-delay-us = <10000>;  // 10ms复位脉冲
-    phy-reset-gpio = <&gpio GPIOH_5 GPIO_ACTIVE_LOW>;
-    phy-reset-delay-us = <20000>;  // PHY复位后等待20ms
-    // 增加链路训练参数
-    snps,enable-cdm-check;
-    num-lanes = <1>;
-    // 强制Gen1模式
-    max-link-speed = <1>;
-};
-
 &pwm_ab {
 	status = "okay";
 	pinctrl-0 = <&pwm_a_e_pins>;
@@ -375,16 +362,43 @@
 };
 
 &usb3_pcie_phy {
+    status = "disabled"; // 完全禁用USB3/PCIe共用PHY
 	phy-supply = <&usb_pwr>;
+};
+
+&pcie_phy {
+    status = "okay";
+    compatible = "amlogic,g12a-pcie-phy";
+    phy-supply = <&vsys_3v3>;
+    clocks = <&clkc CLKID_PCIE_PHY>;
+    clock-names = "refclk";
+    resets = <&reset RESET_PCIE_PHY>;
+    reset-names = "phy";
+    #phy-cells = <0>;
+};
+
+&pcie {
+	status = "okay";
+	reset-gpios = <&gpio GPIOC_1 GPIO_ACTIVE_LOW>; /* tested by voltmeter */
+    reset-delay-us = <10000>;  // 10ms复位脉冲
+    phy-reset-gpio = <&gpio GPIOH_5 GPIO_ACTIVE_LOW>;
+    phy-reset-delay-us = <50000>;  // PHY复位后等待20ms
+    phys = <&pcie_phy>;
+    phy-names = "pciephy";
+    num-lanes = <1>;
+    max-link-speed = <1>;
+    snps,enable-cdm-check;
 };
 
 &usb {
     status = "okay";
     dr_mode = "host";
-    // 仅保留USB2 PHY
+    // 仅使用USB2 PHY
     phys = <&usb2_phy0>, <&usb2_phy1>;
     phy-names = "usb2-phy0", "usb2-phy1";
     maximum-speed = "high-speed"; // 强制USB2.0
-    // 禁用USB3控制器
+    // 完全禁用USB3相关功能
     /delete-property/ usb3-lpm-capable;
+    /delete-property/ usb-phy;
+    /delete-property/ extcon;
 };
