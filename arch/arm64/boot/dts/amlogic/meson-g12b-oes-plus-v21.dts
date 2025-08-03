@@ -362,19 +362,12 @@
 };
 
 &usb3_pcie_phy {
-    status = "disabled"; // 完全禁用USB3/PCIe共用PHY
 	phy-supply = <&usb_pwr>;
 };
 
 &pcie {
 	status = "okay";
-	reset-gpios = <&gpio GPIOC_1 GPIO_ACTIVE_LOW>; /* tested by voltmeter */
-    reset-delay-us = <10000>;  // 10ms复位脉冲
-    phy-reset-gpio = <&gpio GPIOH_5 GPIO_ACTIVE_LOW>;
-    phy-reset-delay-us = <50000>;  // PHY复位后等待20ms
-    num-lanes = <1>;
-    max-link-speed = <1>;
-    snps,enable-cdm-check;
+	reset-gpio = <&gpio 20 GPIO_ACTIVE_LOW>;
 };
 
 &usb {
