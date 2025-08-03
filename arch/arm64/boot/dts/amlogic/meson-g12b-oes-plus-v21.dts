@@ -316,6 +316,14 @@
 &pcie {
 	status = "okay";
 	reset-gpios = <&gpio GPIOC_1 GPIO_ACTIVE_LOW>; /* tested by voltmeter */
+    reset-delay-us = <10000>;  // 10ms复位脉冲
+    phy-reset-gpio = <&gpio GPIOH_5 GPIO_ACTIVE_LOW>;
+    phy-reset-delay-us = <20000>;  // PHY复位后等待20ms
+    // 增加链路训练参数
+    snps,enable-cdm-check;
+    num-lanes = <1>;
+    // 强制Gen1模式
+    max-link-speed = <1>;
 };
 
 &pwm_ab {
@@ -371,13 +379,12 @@
 };
 
 &usb {
-	status = "okay";
-	dr_mode = "host";
-	phys = <&usb2_phy0>, <&usb2_phy1>;
-	phy-names = "usb2-phy0", "usb2-phy1";
-
-    // 移除USB3 PHY配置
-    /delete-property/ phys;
-    /delete-property/ phy-names;
-    maximum-speed = "high-speed"; // 限制为USB2.0
+    status = "okay";
+    dr_mode = "host";
+    // 仅保留USB2 PHY
+    phys = <&usb2_phy0>, <&usb2_phy1>;
+    phy-names = "usb2-phy0", "usb2-phy1";
+    maximum-speed = "high-speed"; // 强制USB2.0
+    // 禁用USB3控制器
+    /delete-property/ usb3-lpm-capable;
 };

@@ -526,17 +526,35 @@ int dw_pcie_wait_for_link(struct dw_pcie *pci)
 {
 	int retries;
 
-	/* Check if the link is up or not */
-	for (retries = 0; retries < LINK_WAIT_MAX_RETRIES; retries++) {
-		if (dw_pcie_link_up(pci)) {
-			dev_info(pci->dev, "Link up\n");
-			return 0;
-		}
-		usleep_range(LINK_WAIT_USLEEP_MIN, LINK_WAIT_USLEEP_MAX);
-	}
+    u32 val;
+    
+    // 先复位PHY
+    if (pci->phy_reset) {
+        reset_control_assert(pci->phy_reset);
+        udelay(100);
+        reset_control_deassert(pci->phy_reset);
+        msleep(50);
+    }
 
-	dev_info(pci->dev, "Phy link never came up\n");
+    for (retries = 0; retries < LINK_WAIT_MAX_RETRIES; retries++) {
+        if (dw_pcie_link_up(pci)) {
+            dev_info(pci->dev, "Link up after %d retries\n", retries);
+            return 0;
+        }
+        
+        // 每5次重试后检查PHY状态
+        if (retries % 5 == 0) {
+            val = readl(pci->dbi_base + PCIE_PORT_DEBUG1);
+            dev_dbg(pci->dev, "PHY status: 0x%08x\n", val);
+        }
+        
+        usleep_range(10000, 20000); // 10-20ms间隔
+    }
 
+    // 最终状态检查
+    val = readl(pci->dbi_base + PCIE_PORT_DEBUG1);
+    dev_err(pci->dev, "PHY link never came up (status: 0x%08x)\n", val);
+    
 	return -ETIMEDOUT;
 }
 EXPORT_SYMBOL_GPL(dw_pcie_wait_for_link);
